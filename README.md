@@ -1,60 +1,111 @@
-# NotaFiscalApp
+# 📄 InvoiceProject - Sistema de Gerenciamento de Notas Fiscais
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.4.
+![GitHub repo size](https://img.shields.io/github/repo-size/albertosilv/InvoiceProject-Front)
+![GitHub](https://img.shields.io/github/license/albertosilv/InvoiceProject-Front)
 
-## Development server
+O InvoiceProject é uma aplicação web moderna para gerenciamento de notas fiscais, desenvolvida com Angular e PrimeNG no frontend, integrando-se com um backend Java Spring Boot.
 
-To start a local development server, run:
+## ✨ Funcionalidades Principais
 
-```bash
-ng serve
+- ✅ Cadastro e gestão de notas fiscais
+- ✅ Adição/edição/remoção de itens de nota fiscal
+- ✅ Visualização detalhada com cálculo automático de totais
+- ✅ Interface intuitiva com PrimeNG
+- ✅ Integração com backend RESTful
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Frontend**:
+  - Angular 15+
+  - PrimeNG
+  - TypeScript
+  - RxJS
+  - HTML5/CSS3
+
+## 🚀 Como Executar o Projeto
+
+### Pré-requisitos
+
+- Node.js 23
+- npm 10.9.0
+- Angular CLI 19
+- Backend InvoiceProject em execução (disponível em [repositório do backend](https://github.com/albertosilv/InvoiceProject))
+
+### Passo a Passo
+
+1. **Clone o repositório**
+   ```bash
+   git clone https://github.com/albertosilv/InvoiceProject-Front.git
+   cd InvoiceProject-Front
+   ```
+
+2. **Instale as dependências**
+   ```bash
+   npm install
+   ```
+
+3. **Configure o ambiente**
+   - Crie um arquivo `src/environments/environment.ts` baseado no `environment.example.ts`
+   - Configure a URL do seu backend:
+     ```typescript
+     export const environment = {
+       production: false,
+       apiUrl: 'http://localhost:8080/api' // URL do seu backend
+     };
+     ```
+
+4. **Execute a aplicação**
+   ```bash
+   ng serve
+   # ou
+   npm start
+   ```
+
+5. **Acesse no navegador**
+   ```
+   http://localhost:4200
+   ```
+
+## 🏗️ Estrutura do Projeto
+
+```
+src/
+├── app/
+│   ├── module/            # Paginas do sistema
+         ├── invoice/      # Modulo de nota fiscal
+         ├── product/      # Modulo de produto
+         ├── supplier/     # Modulo de fornecedores
+    └── core/              # Utilitários compartilhados
+         ├── interceptors/ # Interceptor de error
+         ├── services/     #  Serviços de requisições
+         ├── model/        # Modelos de dados
+└── environments/          # Configurações de ambiente
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## 📦 Scripts Úteis
 
-## Code scaffolding
+| Comando               | Descrição                            |
+|-----------------------|--------------------------------------|
+| `npm start`           | Inicia o servidor de desenvolvimento |
+| `npm run build`       | Gera versão de produção              |
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
-```bash
-ng generate component component-name
-```
+## 🤝 Como Contribuir
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+1. Faça um fork do projeto
+2. Crie uma branch (`git checkout -b feature/nova-feature`)
+3. Commit suas alterações (`git commit -m 'Adiciona nova feature'`)
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Abra um Pull Request
 
-```bash
-ng generate --help
-```
+## 📄 Licença
 
-## Building
+Este projeto está licenciado sob a MIT License - veja o arquivo [LICENSE](LICENSE) para detalhes.
 
-To build the project run:
+## ✉️ Contato
 
-```bash
-ng build
-```
+Albert Silva - [GitHub](https://github.com/albertosilv) - albertosilv@email.com
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
-# InvoiceProject-Front
+**Nota**: Certifique-se de ter o backend em execução antes de iniciar o frontend para que todas as funcionalidades estejam disponíveis.

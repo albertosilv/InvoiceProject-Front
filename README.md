@@ -8,15 +8,17 @@ O InvoiceProject é uma aplicação web moderna para gerenciamento de notas fisc
 ## ✨ Funcionalidades Principais
 
 - ✅ Cadastro e gestão de notas fiscais
+- ✅ Cadastro e gestão de Produtos
+- ✅ Cadastro e gestão de Fornecedores 
 - ✅ Adição/edição/remoção de itens de nota fiscal
 - ✅ Visualização detalhada com cálculo automático de totais
 - ✅ Interface intuitiva com PrimeNG
-- ✅ Integração com backend RESTful
+- ✅ Integração com backend RESTful em Java com Quarkus
 
 ## 🛠️ Tecnologias Utilizadas
 
 - **Frontend**:
-  - Angular 15+
+  - Angular 19
   - PrimeNG
   - TypeScript
   - RxJS

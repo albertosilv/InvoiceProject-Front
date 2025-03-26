@@ -1,0 +1,61 @@
+<!-- nota-fiscal-list.component.html -->
+<div class="card">
+    <p-toolbar>
+        <ng-template pTemplate="left">
+            <h2>Notas Fiscais</h2>
+        </ng-template>
+        <ng-template pTemplate="center">
+            <div class="flex align-items-center gap-2" style="flex-wrap: nowrap;">
+                <!-- Grupo de pesquisa -->
+                <input pInputText placeholder="Pesquisar..." [(ngModel)]="term" (keyup.enter)="pesquisar()">
+                <button pButton icon="pi pi-search" class="p-button-primary" (click)="pesquisar()"
+                    style="margin-left: 0.5rem;">
+                </button>
+                <button pButton icon="pi pi-plus" label="Nova" routerLink="/notas/novo" style="margin-left: 0.5rem;">
+                </button>
+            </div>
+        </ng-template>
+    </p-toolbar>
+
+    <p-table [value]="invoices" [loading]="loading" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5,10,20]"
+        [globalFilterFields]="['numeroNota','fornecedor.email','valorTotal']">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Número</th>
+                <th>Data Emissão</th>
+                <th>Fornecedor</th>
+                <th>Valor Total</th>
+                <th>Itens</th>
+                <th style="width: 120px">Ações</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-nota>
+            <tr>
+                <td>{{ nota.numeroNota }}</td>
+                <td>{{ nota.dataEmissao | date:'dd/MM/yyyy' }}</td>
+                <td>{{ nota.fornecedor.email }}</td>
+                <td>{{ nota.valorTotal | currency:'BRL' }}</td>
+                <td>{{ nota.itens.length }} Itens</td>
+                <td>
+                    <div class="flex gap-2">
+                        <button pButton icon="pi pi-eye" pTooltip="Visualizar" tooltipPosition="top"
+                            class="p-button-rounded p-button-text" [routerLink]="['/notas/detalhes', nota.id]"></button>
+                        <button pButton icon="pi pi-pencil" pTooltip="Editar" tooltipPosition="top"
+                            class="p-button-rounded p-button-text" [routerLink]="['/notas/editar', nota.id]"></button>
+                        <button pButton icon="pi pi-trash" pTooltip="Excluir" tooltipPosition="top"
+                            class="p-button-rounded p-button-text p-button-danger"
+                            (click)="confirmarExclusao(nota)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="6">Nenhuma nota fiscal encontrada</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+<p-toast></p-toast>

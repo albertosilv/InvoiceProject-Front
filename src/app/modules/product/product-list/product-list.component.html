@@ -1,0 +1,60 @@
+<div class="card">
+    <p-toolbar>
+        <ng-template pTemplate="left">
+            <h2>Produtos</h2>
+        </ng-template>
+        <ng-template pTemplate="center">
+            <div class="flex  gap-2" style="flex-wrap: nowrap;">
+                <!-- Grupo de pesquisa -->
+                <input pInputText placeholder="Pesquisar..." [(ngModel)]="term" (keyup.enter)="pesquisar()">
+                <button pButton icon="pi pi-search" class="p-button-primary" (click)="pesquisar()"
+                    style="margin-left: 0.5rem;">
+                </button>
+                <button pButton icon="pi pi-plus" label="Novo" routerLink="/produtos/novo" style="margin-left: 0.5rem;">
+                </button>
+            </div>
+        </ng-template>
+    </p-toolbar>
+
+    <p-table [value]="produtos" [loading]="loading" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5,10,20]"
+        [globalFilterFields]="['codigo','descricao','situacao']">
+        >
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th>Situação</th>
+                <th style="width: 120px">Ações</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-produto>
+            <tr>
+                <td>{{ produto.codigo }}</td>
+                <td>{{ produto.descricao }}</td>
+                <td>
+                    <span [class]="'status-badge status-' + produto.situacao.toLowerCase()">
+                        {{ produto.situacao }}
+                    </span>
+                </td>
+                <td>
+                    <div class="flex gap-2">
+                        <button pButton icon="pi pi-pencil" pTooltip="Editar" tooltipPosition="top"
+                            class="p-button-rounded p-button-text"
+                            [routerLink]="['/produtos/editar', produto.id]"></button>
+                        <button pButton icon="pi pi-trash" pTooltip="Excluir" tooltipPosition="top"
+                            class="p-button-rounded p-button-text p-button-danger" (click)="confirmarExclusao(produto)"
+                            [disabled]="produto.temMovimentacao"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="4">Nenhum produto encontrado</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+<p-toast></p-toast>

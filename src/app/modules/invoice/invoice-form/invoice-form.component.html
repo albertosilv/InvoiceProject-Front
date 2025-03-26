@@ -1,0 +1,72 @@
+<!-- nota-fiscal-form.component.html -->
+<div class="card p-fluid" style="max-width: 800px; margin: 2rem auto;">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="flex flex-column gap-3">
+            <!-- Linha 1: Número da Nota + Data Emissão -->
+            <div class="flex flex-column md:flex-row gap-3">
+                <!-- Campo Número da Nota -->
+                <div class="flex-1 field">
+                    <label for="numeroNota" class="block mb-2 font-medium">Número da Nota*</label>
+                    <input id="numeroNota" type="text" pInputText formControlName="numeroNota"
+                        [class]="{ 'ng-invalid': form.get('numeroNota')?.invalid && form.get('numeroNota')?.touched }"
+                        placeholder="Digite o número da nota fiscal">
+                    <small *ngIf="form.get('numeroNota')?.invalid && form.get('numeroNota')?.touched"
+                        class="p-error block mt-1">
+                        <i class="pi pi-exclamation-circle mr-1"></i>
+                        Número da nota é obrigatório
+                    </small>
+                </div>
+
+                <!-- Campo Data Emissão -->
+                <div class="flex-1 field">
+                    <label for="dataEmissao" class="block mb-2 font-medium">Data Emissão*</label>
+                    <p-calendar id="dataEmissao" formControlName="dataEmissao" [showIcon]="true" dateFormat="dd/mm/yy"
+                        [class]="{ 'ng-invalid': form.get('dataEmissao')?.invalid && form.get('dataEmissao')?.touched }">
+                    </p-calendar>
+                    <small *ngIf="form.get('dataEmissao')?.invalid && form.get('dataEmissao')?.touched"
+                        class="p-error block mt-1">
+                        <i class="pi pi-exclamation-circle mr-1"></i>
+                        Data de emissão é obrigatória
+                    </small>
+                </div>
+            </div>
+
+            <!-- Linha 2: Fornecedor -->
+            <div class="field">
+                <label for="fornecedor_id" class="block mb-2 font-medium">Fornecedor*</label>
+                <p-dropdown id="fornecedor_id" [options]="suppliers" formControlName="fornecedor_id" optionLabel="razao"
+                    optionValue="id" placeholder="Selecione um fornecedor"
+                    [class]="{ 'ng-invalid': form.get('fornecedor_id')?.invalid && form.get('fornecedor_id')?.touched }">
+                </p-dropdown>
+                <small *ngIf="form.get('fornecedor_id')?.invalid && form.get('fornecedor_id')?.touched"
+                    class="p-error block mt-1">
+                    <i class="pi pi-exclamation-circle mr-1"></i>
+                    Fornecedor é obrigatório
+                </small>
+            </div>
+
+            <!-- Linha 3: Endereço -->
+            <div class="field">
+                <label for="endereco" class="block mb-2 font-medium">Endereço*</label>
+                <input id="endereco" type="text" pInputText formControlName="endereco"
+                    [class]="{ 'ng-invalid': form.get('endereco')?.invalid && form.get('endereco')?.touched }"
+                    placeholder="Digite o endereço">
+                <small *ngIf="form.get('endereco')?.invalid && form.get('endereco')?.touched"
+                    class="p-error block mt-1">
+                    <i class="pi pi-exclamation-circle mr-1"></i>
+                    Endereço é obrigatório
+                </small>
+            </div>
+
+        </div>
+        <div class="flex justify-content-end gap-3 mt-5 pt-3 border-top-1 surface-border">
+            <button pButton type="button" label="Cancelar" class="p-button-outlined p-button-secondary"
+                [disabled]="loading" (click)="router.navigate(['/notas'])"></button>
+
+            <button pButton type="submit" label="Salvar" class="p-button-primary" [disabled]="form.invalid || loading"
+                [loading]="loading"></button>
+        </div>
+    </form>
+</div>
+
+<p-toast position="top-right"></p-toast>

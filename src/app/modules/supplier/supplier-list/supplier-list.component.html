@@ -1,0 +1,68 @@
+<div class="card">
+    <p-toolbar>
+        <ng-template pTemplate="left">
+            <h2>Fornecedores</h2>
+        </ng-template>
+        <ng-template pTemplate="center">
+            <div class="flex align-items-center gap-2" style="flex-wrap: nowrap;">
+                <!-- Grupo de pesquisa -->
+                <input pInputText placeholder="Pesquisar..." [(ngModel)]="term" (keyup.enter)="pesquisar()">
+                <button pButton icon="pi pi-search" class="p-button-primary" (click)="pesquisar()"
+                    style="margin-left: 0.5rem;">
+                </button>
+                <button pButton icon="pi pi-plus" label="Novo" routerLink="/fornecedores/novo"
+                    style="margin-left: 0.5rem;">
+                </button>
+            </div>
+        </ng-template>
+    </p-toolbar>
+
+    <p-table [value]="fornecedores" [loading]="loading" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5,10,20]"
+        [globalFilterFields]="['codigo','razao','cnpj','status']">
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="codigo">Código <p-sortIcon field="codigo"></p-sortIcon></th>
+                <th pSortableColumn="razao">Razão Social <p-sortIcon field="razao"></p-sortIcon></th>
+                <th pSortableColumn="cnpj">CNPJ <p-sortIcon field="cnpj"></p-sortIcon></th>
+                <th pSortableColumn="email">E-mail <p-sortIcon field="status"></p-sortIcon></th>
+                <th pSortableColumn="data_desativacao">Data de Desativação <p-sortIcon field="status"></p-sortIcon></th>
+                <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+                <th style="width: 120px">Ações</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-fornecedor>
+            <tr>
+                <td>{{ fornecedor.codigo }}</td>
+                <td>{{ fornecedor.razao }}</td>
+                <td>{{ fornecedor.cnpj }}</td>
+                <td>{{ fornecedor.email }}</td>
+                <td>{{ fornecedor.data_desativacao }}</td>
+
+                <td>
+                    <span [class]="'status-badge status-' + fornecedor.status.toLowerCase()">
+                        {{ fornecedor.status }}
+                    </span>
+                </td>
+
+                <td>
+                    <div class="flex gap-2">
+                        <button pButton icon="pi pi-pencil" pTooltip="Editar" tooltipPosition="top"
+                            class="p-button-rounded p-button-text"
+                            [routerLink]="['/fornecedores/editar', fornecedor.id]"></button>
+                        <button pButton icon="pi pi-trash" pTooltip="Excluir" tooltipPosition="top"
+                            class="p-button-rounded p-button-text p-button-danger"
+                            (click)="confirmarExclusao(fornecedor)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="5">Nenhum fornecedor encontrado</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+<p-toast></p-toast>

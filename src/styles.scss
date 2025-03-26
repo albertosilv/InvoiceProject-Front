@@ -1,1 +1,65 @@
-/* You can add global styles to this file, and also import other style files */
+/* Seus estilos globais */
+@import "primeicons/primeicons.css";
+
+body {
+    margin: 0;
+    font-family: var(--font-family);
+}
+
+
+
+/* Classes de status */
+.status-badge {
+    border-radius: 2rem;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+
+    &.status-ativo {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    &.status-inativo {
+        background: #ffebee;
+        color: #c62828;
+    }
+}
+
+
+.status-badge {
+    border-radius: 2rem;
+    padding: 0.25rem 0.75rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+
+    &.status-ativo {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    &.status-inativo {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+}
+
+.p-error {
+    color: #f44336;
+    font-size: 0.875rem;
+}
+
+@media screen and (max-width: 768px) {
+    .p-datatable {
+
+        .p-datatable-thead>tr>th,
+        .p-datatable-tbody>tr>td {
+            display: none;
+        }
+
+        .p-datatable-tbody>tr>td:first-child {
+            display: block;
+            font-weight: bold;
+        }
+    }
+}

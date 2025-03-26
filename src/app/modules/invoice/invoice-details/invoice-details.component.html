@@ -1,0 +1,149 @@
+<div class="card">
+    <p-toolbar>
+        <ng-template pTemplate="left">
+            <h2>Nota Fiscal {{invoice?.numeroNota}}</h2>
+        </ng-template>
+        <ng-template pTemplate="right">
+            <button pButton icon="pi pi-arrow-left" label="Voltar" class="p-button-secondary"
+                routerLink="/notas"></button>
+        </ng-template>
+    </p-toolbar>
+
+    <div *ngIf="invoice && !loading; else loadingTemplate">
+        <!-- Seção de informações básicas com layout em tabela -->
+        <div class="mb-5">
+            <table class="w-full">
+                <!-- Linha 1 -->
+                <tr>
+                    <td class="p-2 font-medium align-top" style="width: 120px">Número:</td>
+                    <td class="p-2 font-semibold">{{invoice.numeroNota}}</td>
+
+                    <td class="p-2 font-medium align-top" style="width: 120px">Data Emissão:</td>
+                    <td class="p-2 font-semibold">{{invoice.dataEmissao | date:'dd/MM/yyyy'}}</td>
+                </tr>
+
+                <!-- Linha 2 -->
+                <tr>
+                    <td class="p-2 font-medium align-top">Fornecedor:</td>
+                    <td class="p-2 font-semibold">{{invoice.fornecedor.razao}}</td>
+                </tr>
+
+                <!-- Linha 3 -->
+                <tr>
+                    <td class="p-2 font-medium align-top">Valor Total:</td>
+                    <td class="p-2 font-bold text-lg">{{calcularValorTotal() | currency:'BRL'}}</td>
+                </tr>
+
+                <!-- Linha 4 -->
+                <tr>
+                    <td class="p-2 font-medium align-top">Endereço:</td>
+                    <td class="p-2 font-semibold" colspan="3">{{invoice.endereco}}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Seção de Itens -->
+        <div class="mb-5">
+            <div class="flex justify-content-between align-items-center mb-3">
+                <h3>Itens da Nota Fiscal</h3>
+                <button pButton icon="pi pi-plus" label="Adicionar Item" class="p-button-sm"
+                    style="margin-bottom: 0.5rem;margin-top: 0.5rem;" (click)="mostrarDialogNovoItem()"></button>
+            </div>
+
+            <p-table [value]="invoice.itens" [loading]="loadingItens" [rows]="5" [paginator]="true">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Produto</th>
+                        <th width="120px">Quantidade</th>
+                        <th width="150px">Valor Unitário</th>
+                        <th width="150px">Valor Total</th>
+                        <th width="120px">Ações</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                    <tr>
+                        <td>{{item.produto?.descricao || 'Produto não encontrado'}}</td>
+                        <td>{{item.quantidade | number:'1.2-2'}}</td>
+                        <td>{{item.valorUnitario | currency:'BRL':'symbol':'1.2-2'}}</td>
+                        <td>{{item.quantidade * item.valorUnitario | currency:'BRL':'symbol':'1.2-2'}}</td>
+                        <td>
+                            <div class="flex gap-2">
+                                <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-sm"
+                                    (click)="mostrarDialogEditarItem(item)" pTooltip="Editar"
+                                    tooltipPosition="top"></button>
+                                <button pButton icon="pi pi-trash"
+                                    class="p-button-rounded p-button-text p-button-danger p-button-sm"
+                                    (click)="confirmarRemocaoItem(item.id, rowIndex)" pTooltip="Remover"
+                                    tooltipPosition="top"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="5">Nenhum item adicionado</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+    <ng-template #loadingTemplate>
+        <div class="flex justify-content-center align-items-center" style="height: 200px;">
+            <p-progressSpinner></p-progressSpinner>
+        </div>
+    </ng-template>
+</div>
+
+<!-- Dialog para adicionar/editar item -->
+<p-dialog [header]="editItem ? 'Editar Item' : 'Adicionar Item'" [(visible)]="displayDialogItem"
+    [style]="{width: '500px'}" [modal]="true">
+    <form [formGroup]="itemForm" (ngSubmit)="salvarItem()">
+        <div class="grid p-fluid">
+            <div class="field col-12">
+                <label for="produto_id">Produto*</label>
+                <p-dropdown id="produto_id" [options]="products" formControlName="produto_id" optionLabel="descricao"
+                    optionValue="id" [filter]="true" filterBy="descricao" placeholder="Selecione um produto"
+                    [class]="{'ng-invalid': itemForm.get('produto_id')?.invalid && itemForm.get('produto_id')?.touched}">
+                </p-dropdown>
+                <small *ngIf="itemForm.get('produto_id')?.invalid && itemForm.get('produto_id')?.touched"
+                    class="p-error block">
+                    Produto é obrigatório
+                </small>
+            </div>
+
+            <div class="field col-6">
+                <label for="quantidade">Quantidade*</label>
+                <p-inputNumber id="quantidade" formControlName="quantidade" mode="decimal" [min]="0.01" [step]="0.01"
+                    [class]="{'ng-invalid': itemForm.get('quantidade')?.invalid && itemForm.get('quantidade')?.touched}">
+                </p-inputNumber>
+                <small *ngIf="itemForm.get('quantidade')?.invalid && itemForm.get('quantidade')?.touched"
+                    class="p-error block">
+                    Quantidade inválida (mínimo 0.01)
+                </small>
+            </div>
+
+            <div class="field col-6">
+                <label for="valorUnitario">Valor Unitário*</label>
+                <p-inputNumber id="valorUnitario" formControlName="valorUnitario" mode="currency" currency="BRL"
+                    locale="pt-BR" [min]="0.01"
+                    [class]="{'ng-invalid': itemForm.get('valorUnitario')?.invalid && itemForm.get('valorUnitario')?.touched}">
+                </p-inputNumber>
+                <small *ngIf="itemForm.get('valorUnitario')?.invalid && itemForm.get('valorUnitario')?.touched"
+                    class="p-error block">
+                    Valor inválido (mínimo 0.01)
+                </small>
+            </div>
+        </div>
+
+        <div class="flex justify-content-end gap-2 mt-3">
+            <button pButton type="button" label="Cancelar" class="p-button-secondary" style="margin: 0.5rem;"
+                (click)="fecharDialog()"></button>
+            <button pButton type="submit" label="{{editItem ? 'Atualizar' : 'Adicionar'}}" class="p-button-primary"
+                style="margin: 0.5rem;" [disabled]="itemForm.invalid || loadingItem"></button>
+        </div>
+    </form>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+<p-toast position="top-right"></p-toast>

@@ -1,0 +1,52 @@
+<div class="card p-fluid" style="max-width: 800px; margin: 2rem auto;">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="flex flex-row gap-3">
+            <!-- Linha 1: Código + Situação - usando flex row -->
+            <div class="flex flex-column md:flex-row gap-3">
+                <!-- Campo Código -->
+                <div class="flex-1 field">
+                    <label for="codigo" class="block mb-2 font-medium">Código*</label>
+                    <input id="codigo" type="text" pInputText formControlName="codigo"
+                        [class]="{ 'ng-invalid': form.get('codigo')?.invalid && form.get('codigo')?.touched }"
+                        placeholder="Digite o código do produto">
+                    <small *ngIf="form.get('codigo')?.invalid && form.get('codigo')?.touched"
+                        class="p-error block mt-1">
+                        <i class="pi pi-exclamation-circle mr-1"></i>
+                        Código é obrigatório (máximo 20 caracteres)
+                    </small>
+                </div>
+
+                <!-- Campo Situação -->
+                <div class="flex-1 field">
+                    <label for="situacao" class="block mb-2 font-medium">Situação*</label>
+                    <p-dropdown id="situacao" [options]="situacoes" formControlName="situacao" placeholder="Selecione"
+                        [style]="{ width: '100%' }"></p-dropdown>
+                </div>
+            </div>
+
+            <!-- Linha 2: Descrição -->
+            <div class="field">
+                <label for="descricao" class="block mb-2 font-medium">Descrição*</label>
+                <textarea id="descricao" pInputTextarea formControlName="descricao"
+                    [class]="{ 'ng-invalid': form.get('descricao')?.invalid && form.get('descricao')?.touched }"
+                    rows="3" placeholder="Digite a descrição completa"></textarea>
+                <small *ngIf="form.get('descricao')?.invalid && form.get('descricao')?.touched"
+                    class="p-error block mt-1">
+                    <i class="pi pi-exclamation-circle mr-1"></i>
+                    Descrição é obrigatória (máximo 100 caracteres)
+                </small>
+            </div>
+        </div>
+
+        <!-- Rodapé do formulário -->
+        <div class="flex justify-content-end gap-3 mt-5 pt-3 border-top-1 surface-border">
+            <button pButton type="button" label="Cancelar" class="p-button-outlined p-button-secondary"
+                [disabled]="loading" (click)="router.navigate(['/produtos'])"></button>
+
+            <button pButton type="submit" label="Salvar" class="p-button-primary" [disabled]="form.invalid || loading"
+                [loading]="loading"></button>
+        </div>
+    </form>
+</div>
+
+<p-toast position="top-right"></p-toast>

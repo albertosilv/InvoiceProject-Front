@@ -22,7 +22,7 @@ export const SituacaoSupplierBackendMap: Record<string, string> = {
   [SupplierStatus.SUSPENSO]: 'SUSPENDED',
 };
 
-export const situacoes = [
+export const status = [
   { label: SupplierStatus.ATIVO, value: SupplierStatus.ATIVO },
   { label: SupplierStatus.BAIXADO, value: SupplierStatus.BAIXADO },
   { label: SupplierStatus.SUSPENSO, value: SupplierStatus.SUSPENSO },

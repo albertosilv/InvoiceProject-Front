@@ -43,7 +43,7 @@ import { Invoice } from '../../../core/models/invoice.model';
 export class InvoiceFormComponent implements OnInit {
   form: FormGroup;
   isEdit = false;
-  notaFiscalId?: number;
+  invoiceId?: number;
   suppliers: Supplier[] = [];
   loading = false;
 
@@ -64,42 +64,42 @@ export class InvoiceFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.carregarFornecedores();
+    this.getSuppliers();
 
-    this.notaFiscalId = this.route.snapshot.params['id'];
-    if (this.notaFiscalId) {
+    this.invoiceId = this.route.snapshot.params['id'];
+    if (this.invoiceId) {
       this.isEdit = true;
-      this.carregarNotaFiscal(this.notaFiscalId);
+      this.getInvoice(this.invoiceId);
     }
   }
 
-  carregarFornecedores(): void {
+  getSuppliers(): void {
     this.loading = true;
-    this.supplierService.pesquisar().subscribe({
+    this.supplierService.search().subscribe({
       next: (suppliers) => {
         this.suppliers = suppliers;
         this.loading = false;
       },
       error: () => {
-        this.mostrarErro('Erro ao carregar suppliers');
+        this.openMessageError('Erro ao carregar suppliers');
         this.loading = false;
       },
     });
   }
 
-  carregarNotaFiscal(id: number): void {
+  getInvoice(id: number): void {
     this.loading = true;
-    this.InvoiceService.buscarPorId(id).subscribe({
-      next: (notaFiscal) => {
+    this.InvoiceService.getById(id).subscribe({
+      next: (invoice) => {
         this.form.patchValue({
-          ...notaFiscal,
-          fornecedor_id: notaFiscal.fornecedor.id,
+          ...invoice,
+          fornecedor_id: invoice.fornecedor.id,
         });
         this.loading = false;
       },
       error: () => {
-        this.mostrarErro('Erro ao carregar nota fiscal');
-        this.router.navigate(['/notas-fiscais']);
+        this.openMessageError('Erro ao carregar nota fiscal');
+        this.router.navigate(['/notas']);
       },
     });
   }
@@ -113,47 +113,49 @@ export class InvoiceFormComponent implements OnInit {
     this.loading = true;
     const formValue = this.form.value;
 
-    const fornecedorSelecionado = this.suppliers.find(
+    const supplierSelected = this.suppliers.find(
       (f) => f.id === formValue.fornecedor_id
     );
 
-    const notaFiscal: Omit<Invoice, 'id' | 'itens'> = {
+    const invoice: Omit<Invoice, 'id' | 'itens'> = {
       ...formValue,
-      fornecedor_id: fornecedorSelecionado?.id!,
+      fornecedor_id: supplierSelected?.id!,
       itens: [], // Itens serão adicionados posteriormente
     };
 
-    if (this.isEdit && this.notaFiscalId) {
-      this.atualizarNotaFiscal(this.notaFiscalId, notaFiscal);
+    if (this.isEdit && this.invoiceId) {
+      this.updateInvoice(this.invoiceId, invoice);
     } else {
-      this.criarNotaFiscal(notaFiscal);
+      this.criarNotaFiscal(invoice);
     }
   }
 
-  private criarNotaFiscal(notaFiscal: Omit<Invoice, 'id' | 'itens'>): void {
-    this.InvoiceService.criar(notaFiscal).subscribe({
+  private criarNotaFiscal(invoice: Omit<Invoice, 'id' | 'itens'>): void {
+    this.InvoiceService.create(invoice).subscribe({
       next: () => {
-        this.mostrarSucesso('Nota fiscal criada com sucesso');
+        this.openMessageSucess('Nota fiscal criada com sucesso');
         this.router.navigate(['/notas']);
       },
       error: (erro) => {
-        this.mostrarErro(erro.error?.message || 'Erro ao criar nota fiscal');
+        this.openMessageError(
+          erro.error?.message || 'Erro ao criar nota fiscal'
+        );
         this.loading = false;
       },
     });
   }
 
-  private atualizarNotaFiscal(
+  private updateInvoice(
     id: number,
-    notaFiscal: Omit<Invoice, 'id' | 'itens'>
+    invoice: Omit<Invoice, 'id' | 'itens'>
   ): void {
-    this.InvoiceService.atualizar(id, notaFiscal).subscribe({
+    this.InvoiceService.update(id, invoice).subscribe({
       next: () => {
-        this.mostrarSucesso('Nota fiscal atualizada com sucesso');
+        this.openMessageSucess('Nota fiscal atualizada com sucesso');
         this.router.navigate(['/notas']);
       },
       error: (erro) => {
-        this.mostrarErro(
+        this.openMessageError(
           erro.error?.message || 'Erro ao atualizar nota fiscal'
         );
         this.loading = false;
@@ -161,19 +163,19 @@ export class InvoiceFormComponent implements OnInit {
     });
   }
 
-  private mostrarSucesso(mensagem: string): void {
+  private openMessageSucess(detalhe: string): void {
     this.messageService.add({
       severity: 'success',
       summary: 'Sucesso',
-      detail: mensagem,
+      detail: detalhe,
     });
   }
 
-  private mostrarErro(mensagem: string): void {
+  private openMessageError(detalhe: string): void {
     this.messageService.add({
       severity: 'error',
       summary: 'Erro',
-      detail: mensagem,
+      detail: detalhe,
     });
   }
 }

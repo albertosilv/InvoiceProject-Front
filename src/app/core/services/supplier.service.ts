@@ -12,23 +12,22 @@ export class SupplierService {
 
   constructor(private http: HttpClient) {}
 
-  buscarPorId(id: number): Observable<Supplier> {
+  getById(id: number): Observable<Supplier> {
     return this.http.get<Supplier>(`${this.apiUrl}/${id}`);
   }
 
-  criar(fornecedor: Omit<Supplier, 'id'>): Observable<Supplier> {
+  create(fornecedor: Omit<Supplier, 'id'>): Observable<Supplier> {
     return this.http.post<Supplier>(this.apiUrl, fornecedor);
   }
-  atualizar(id: number, fornecedor: Supplier): Observable<Supplier> {
+  update(id: number, fornecedor: Supplier): Observable<Supplier> {
     return this.http.put<Supplier>(`${this.apiUrl}/${id}`, fornecedor);
   }
 
-  excluir(id: number): Observable<void> {
+  delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  // Pesquisar produtos
-  pesquisar(termo: string = ''): Observable<Supplier[]> {
+  search(termo: string = ''): Observable<Supplier[]> {
     const params = termo ? { params: { filter: termo } } : {};
     return this.http.get<Supplier[]>(`${this.apiUrl}/`, params);
   }

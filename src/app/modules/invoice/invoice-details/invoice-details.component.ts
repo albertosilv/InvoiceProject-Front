@@ -81,17 +81,17 @@ export class InvoiceDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.carregarInvoice();
-    this.carregarProducts();
+    this.getInvoice();
+    this.getProducts();
   }
 
-  carregarInvoice(): void {
+  getInvoice(): void {
     const id = this.route.snapshot.params['id'];
     if (!id) {
       this.router.navigate(['/notas']);
     }
     this.loading = true;
-    this.invoiceService.buscarPorId(id).subscribe({
+    this.invoiceService.getById(id).subscribe({
       next: (nota) => {
         this.invoice = nota;
         this.loading = false;
@@ -107,8 +107,8 @@ export class InvoiceDetailsComponent implements OnInit {
     });
   }
 
-  carregarProducts(): void {
-    this.productService.pesquisar().subscribe({
+  getProducts(): void {
+    this.productService.search().subscribe({
       next: (products) => {
         this.products = products;
       },
@@ -122,7 +122,7 @@ export class InvoiceDetailsComponent implements OnInit {
     });
   }
 
-  mostrarDialogNovoItem(): void {
+  openDialogNewItem(): void {
     this.itemForm.reset({
       produto_id: null,
       quantidade: 1,
@@ -133,7 +133,7 @@ export class InvoiceDetailsComponent implements OnInit {
     this.displayDialogItem = true;
   }
 
-  mostrarDialogEditarItem(item: InvoiceItem): void {
+  openDialogUpdateItem(item: InvoiceItem): void {
     this.itemSelected = item;
     this.itemForm.patchValue({
       produto_id: item.produto.id,
@@ -144,71 +144,71 @@ export class InvoiceDetailsComponent implements OnInit {
     this.displayDialogItem = true;
   }
 
-  salvarItem(): void {
+  saveItem(): void {
     if (this.itemForm.invalid || !this.invoice) return;
 
     this.loadingItem = true;
     const formValue = this.itemForm.value;
 
     if (this.editItem && this.itemSelected) {
-      this.atualizarItem(formValue);
+      this.updateItem(formValue);
     } else {
-      this.adicionarItem(formValue);
+      this.createItem(formValue);
     }
   }
 
-  adicionarItem(formValue: any): void {
+  createItem(formValue: any): void {
     const novoItem: Omit<InvoiceItem, 'id' | 'valorTotal'> = {
       ...formValue,
       produto_id: formValue.produto_id,
     };
 
     if (this.invoice && this.invoice.id) {
-      this.invoiceService.adicionarItem(this.invoice.id, novoItem).subscribe({
+      this.invoiceService.createItem(this.invoice.id, novoItem).subscribe({
         next: (item) => {
-          this.carregarInvoice();
-          this.mostrarMensagemSucesso('Item adicionado com sucesso');
-          this.fecharDialog();
+          this.getInvoice();
+          this.openMessageSucess('Item adicionado com sucesso');
+          this.closeDialog();
         },
         error: (err) => {
-          this.mostrarMensagemErro('Erro ao adicionar item');
+          this.openMessageError('Erro ao adicionar item');
         },
       });
     } else {
-      this.mostrarMensagemErro('Erro ao adicionar item');
+      this.openMessageError('Erro ao adicionar item');
     }
   }
 
-  atualizarItem(formValue: any): void {
+  updateItem(formValue: any): void {
     if (!this.itemSelected || !this.invoice) return;
 
-    const itemAtualizado: InvoiceItem = {
+    const itemUpdated: InvoiceItem = {
       ...this.itemSelected,
       ...formValue,
       produto_id: formValue.produto_id,
     };
 
     this.invoiceService
-      .atualizarItem(this.invoice.id, this.itemSelected.id, itemAtualizado)
+      .updateItem(this.invoice.id, this.itemSelected.id, itemUpdated)
       .subscribe({
         next: (item) => {
-          this.carregarInvoice();
-          this.mostrarMensagemSucesso('Item atualizado com sucesso');
-          this.fecharDialog();
+          this.getInvoice();
+          this.openMessageSucess('Item atualizado com sucesso');
+          this.closeDialog();
         },
         error: (err) => {
-          this.mostrarMensagemErro('Erro ao atualizar item');
+          this.openMessageError('Erro ao atualizar item');
         },
       });
   }
 
-  fecharDialog(): void {
+  closeDialog(): void {
     this.displayDialogItem = false;
     this.loadingItem = false;
     this.itemSelected = null;
   }
 
-  confirmarRemocaoItem(itemId: number, index: number): void {
+  confirmDeleteItem(itemId: number, index: number): void {
     if (!this.invoice) return;
 
     this.confirmationService.confirm({
@@ -218,28 +218,28 @@ export class InvoiceDetailsComponent implements OnInit {
       acceptLabel: 'Sim',
       rejectLabel: 'Não',
       accept: () => {
-        this.removerItem(itemId, index);
+        this.deleteItem(itemId, index);
       },
     });
   }
 
-  removerItem(itemId: number, index: number): void {
+  deleteItem(itemId: number, index: number): void {
     if (!this.invoice) return;
 
     this.loadingItens = true;
-    this.invoiceService.removerItem(this.invoice.id, itemId).subscribe({
+    this.invoiceService.deleteItem(this.invoice.id, itemId).subscribe({
       next: () => {
-        this.carregarInvoice();
-        this.mostrarMensagemSucesso('Item removido com sucesso');
+        this.getInvoice();
+        this.openMessageSucess('Item removido com sucesso');
         this.loadingItens = false;
       },
       error: (err) => {
-        this.mostrarMensagemErro('Erro ao remover item');
+        this.openMessageError('Erro ao remover item');
       },
     });
   }
 
-  calcularValorTotal(): number {
+  getValueTotal(): number {
     if (!this.invoice) return 0;
     return this.invoice.itens.reduce(
       (total, item) => total + item.quantidade * item.valorUnitario,
@@ -247,11 +247,11 @@ export class InvoiceDetailsComponent implements OnInit {
     );
   }
 
-  calcularValorItem(item: InvoiceItem): number {
+  getValueItem(item: InvoiceItem): number {
     return item.quantidade * item.valorUnitario;
   }
 
-  private mostrarMensagemSucesso(detalhe: string): void {
+  private openMessageSucess(detalhe: string): void {
     this.messageService.add({
       severity: 'success',
       summary: 'Sucesso',
@@ -259,7 +259,7 @@ export class InvoiceDetailsComponent implements OnInit {
     });
   }
 
-  private mostrarMensagemErro(detalhe: string): void {
+  private openMessageError(detalhe: string): void {
     this.messageService.add({
       severity: 'error',
       summary: 'Erro',

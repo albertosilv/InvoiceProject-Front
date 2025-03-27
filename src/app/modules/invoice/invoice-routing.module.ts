@@ -6,7 +6,7 @@ import { InvoiceDetailsComponent } from './invoice-details/invoice-details.compo
 
 const invoiceRoutes = [
   {
-    path: '', // Rota base: /produtos
+    path: '',
     component: InvoiceListComponent,
   },
   {

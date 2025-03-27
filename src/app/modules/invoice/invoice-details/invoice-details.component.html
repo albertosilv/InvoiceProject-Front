@@ -31,7 +31,7 @@
                 <!-- Linha 3 -->
                 <tr>
                     <td class="p-2 font-medium align-top">Valor Total:</td>
-                    <td class="p-2 font-bold text-lg">{{calcularValorTotal() | currency:'BRL'}}</td>
+                    <td class="p-2 font-bold text-lg">{{getValueTotal() | currency:'BRL'}}</td>
                 </tr>
 
                 <!-- Linha 4 -->
@@ -47,7 +47,7 @@
             <div class="flex justify-content-between align-items-center mb-3">
                 <h3>Itens da Nota Fiscal</h3>
                 <button pButton icon="pi pi-plus" label="Adicionar Item" class="p-button-sm"
-                    style="margin-bottom: 0.5rem;margin-top: 0.5rem;" (click)="mostrarDialogNovoItem()"></button>
+                    style="margin-bottom: 0.5rem;margin-top: 0.5rem;" (click)="openDialogNewItem()"></button>
             </div>
 
             <p-table [value]="invoice.itens" [loading]="loadingItens" [rows]="5" [paginator]="true">
@@ -69,11 +69,11 @@
                         <td>
                             <div class="flex gap-2">
                                 <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-sm"
-                                    (click)="mostrarDialogEditarItem(item)" pTooltip="Editar"
+                                    (click)="openDialogUpdateItem(item)" pTooltip="Editar"
                                     tooltipPosition="top"></button>
                                 <button pButton icon="pi pi-trash"
                                     class="p-button-rounded p-button-text p-button-danger p-button-sm"
-                                    (click)="confirmarRemocaoItem(item.id, rowIndex)" pTooltip="Remover"
+                                    (click)="confirmDeleteItem(item.id, rowIndex)" pTooltip="Remover"
                                     tooltipPosition="top"></button>
                             </div>
                         </td>
@@ -98,7 +98,7 @@
 <!-- Dialog para adicionar/editar item -->
 <p-dialog [header]="editItem ? 'Editar Item' : 'Adicionar Item'" [(visible)]="displayDialogItem"
     [style]="{width: '500px'}" [modal]="true">
-    <form [formGroup]="itemForm" (ngSubmit)="salvarItem()">
+    <form [formGroup]="itemForm" (ngSubmit)="saveItem()">
         <div class="grid p-fluid">
             <div class="field col-12">
                 <label for="produto_id">Produto*</label>
@@ -138,7 +138,7 @@
 
         <div class="flex justify-content-end gap-2 mt-3">
             <button pButton type="button" label="Cancelar" class="p-button-secondary" style="margin: 0.5rem;"
-                (click)="fecharDialog()"></button>
+                (click)="closeDialog()"></button>
             <button pButton type="submit" label="{{editItem ? 'Atualizar' : 'Adicionar'}}" class="p-button-primary"
                 style="margin: 0.5rem;" [disabled]="itemForm.invalid || loadingItem"></button>
         </div>

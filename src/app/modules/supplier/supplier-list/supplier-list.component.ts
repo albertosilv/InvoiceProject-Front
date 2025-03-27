@@ -36,7 +36,7 @@ import { TagModule } from 'primeng/tag';
   providers: [ConfirmationService, MessageService],
 })
 export class SupplierListComponent implements OnInit {
-  fornecedores: Supplier[] = [];
+  suppliers: Supplier[] = [];
   loading = true;
   term = '';
 
@@ -48,68 +48,69 @@ export class SupplierListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.carregarFornecedores();
+    this.getSuppliers();
   }
 
-  carregarFornecedores(): void {
+  getSuppliers(): void {
     this.loading = true;
-    this.supplierService.pesquisar().subscribe({
-      next: (fornecedores) => {
-        this.fornecedores = fornecedores;
+    this.supplierService.search().subscribe({
+      next: (suppliers) => {
+        this.suppliers = suppliers;
         this.loading = false;
       },
       error: () => {
-        this.mostrarErro('Falha ao carregar fornecedores');
+        this.openMessageError('Falha ao carregar fornecedores');
         this.loading = false;
       },
     });
   }
 
-  pesquisar(): void {
+  search(): void {
     if (this.term.trim().length === 0) {
-      this.carregarFornecedores();
+      this.getSuppliers();
       return;
     }
 
     this.loading = true;
-    this.supplierService.pesquisar(this.term).subscribe({
-      next: (fornecedores) => {
-        this.fornecedores = fornecedores;
+    this.supplierService.search(this.term).subscribe({
+      next: (suppliers) => {
+        this.suppliers = suppliers;
         this.loading = false;
       },
       error: () => {
-        this.mostrarErro('Falha na pesquisa');
+        this.openMessageError('Falha na pesquisa');
         this.loading = false;
       },
     });
   }
 
-  confirmarExclusao(fornecedor: Supplier): void {
+  confirmDelete(supplier: Supplier): void {
     this.confirmationService.confirm({
-      message: `Deseja realmente excluir o fornecedor ${fornecedor.razao}?`,
+      message: `Deseja realmente deletar o fornecedor ${supplier.razao}?`,
       header: 'Confirmação de Exclusão',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sim',
       rejectLabel: 'Não',
-      accept: () => this.excluirFornecedor(fornecedor.id),
+      accept: () => this.deleteSupplier(supplier.id),
     });
   }
 
-  excluirFornecedor(id: number): void {
-    this.supplierService.excluir(id).subscribe({
+  deleteSupplier(id: number): void {
+    this.supplierService.delete(id).subscribe({
       next: () => {
-        this.mostrarSucesso('Fornecedor excluído com sucesso');
-        this.carregarFornecedores();
+        this.openMessageSucess('Fornecedor excluído com sucesso');
+        this.getSuppliers();
       },
       error: (erro) => {
+        console.log(erro);
         const mensagemErro =
           erro.error?.message || 'Falha ao excluir fornecedor';
-        this.mostrarErro(mensagemErro);
+        this.openMessageError(mensagemErro);
       },
     });
   }
 
-  private mostrarSucesso(mensagem: string): void {
+  private openMessageSucess(mensagem: string): void {
     this.messageService.add({
       severity: 'success',
       summary: 'Sucesso',
@@ -117,7 +118,7 @@ export class SupplierListComponent implements OnInit {
     });
   }
 
-  private mostrarErro(mensagem: string): void {
+  private openMessageError(mensagem: string): void {
     this.messageService.add({
       severity: 'error',
       summary: 'Erro',

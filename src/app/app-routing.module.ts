@@ -19,7 +19,6 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./modules/invoice/invoice.module').then((m) => m.InvoicesModule),
   },
-  // ... outras rotas
 ];
 
 @NgModule({

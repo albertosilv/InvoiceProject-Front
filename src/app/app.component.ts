@@ -7,7 +7,6 @@ import { MenubarModule } from 'primeng/menubar';
   selector: 'app-root',
   imports: [RouterOutlet, MenubarModule],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
 })
 export class AppComponent {
   title = 'nota-fiscal-app';

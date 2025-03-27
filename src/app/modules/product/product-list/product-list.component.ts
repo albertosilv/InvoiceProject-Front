@@ -14,7 +14,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
-  selector: 'app-produto-list',
+  selector: 'app-products-list',
   templateUrl: './product-list.component.html',
   imports: [
     CommonModule,
@@ -32,7 +32,7 @@ import { InputTextModule } from 'primeng/inputtext';
   standalone: true,
 })
 export class ProductListComponent implements OnInit {
-  produtos: Product[] = [];
+  products: Product[] = [];
   loading = true;
   term = '';
 
@@ -44,64 +44,65 @@ export class ProductListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.carregarProducts();
+    this.getProducts();
   }
 
-  carregarProducts(): void {
+  getProducts(): void {
     this.loading = true;
-    this.productService.pesquisar().subscribe({
-      next: (produtos) => {
-        this.produtos = produtos;
+    this.productService.search().subscribe({
+      next: (products) => {
+        this.products = products;
         this.loading = false;
       },
       error: () => {
-        this.mostrarErro('Erro ao carregar produtos');
+        this.openMessageError('Erro ao carregar produtos');
         this.loading = false;
       },
     });
   }
 
-  pesquisar(): void {
+  search(): void {
     if (!this.term.trim()) {
-      this.carregarProducts();
+      this.getProducts();
       return;
     }
 
     this.loading = true;
-    this.productService.pesquisar(this.term).subscribe({
-      next: (produtos) => {
-        this.produtos = produtos;
+    this.productService.search(this.term).subscribe({
+      next: (products) => {
+        this.products = products;
         this.loading = false;
       },
       error: () => {
-        this.mostrarErro('Erro na pesquisa');
+        this.openMessageError('Erro na pesquisa');
         this.loading = false;
       },
     });
   }
 
-  confirmarExclusao(produto: Product): void {
+  confirmDelete(products: Product): void {
     this.confirmationService.confirm({
-      message: `Deseja realmente excluir o produto ${produto.descricao}?`,
+      message: `Deseja realmente deletar o produto ${products.descricao}?`,
       header: 'Confirmar Exclusão',
       icon: 'pi pi-exclamation-triangle',
-      accept: () => this.excluirProduct(produto.id),
+      accept: () => this.deleteProduct(products.id),
     });
   }
 
-  excluirProduct(id: number): void {
-    this.productService.excluir(id).subscribe({
+  deleteProduct(id: number): void {
+    this.productService.delete(id).subscribe({
       next: () => {
-        this.mostrarSucesso('Product excluído com sucesso');
-        this.carregarProducts();
+        this.openMessageSucess('Produto excluído com sucesso');
+        this.getProducts();
       },
       error: (erro) => {
-        this.mostrarErro(erro.error?.message || 'Erro ao excluir produto');
+        console.log(erro);
+        this.openMessageError(erro.error?.message || 'Erro ao excluir produto');
       },
     });
   }
 
-  private mostrarSucesso(mensagem: string): void {
+  private openMessageSucess(mensagem: string): void {
     this.messageService.add({
       severity: 'success',
       summary: 'Sucesso',
@@ -109,7 +110,7 @@ export class ProductListComponent implements OnInit {
     });
   }
 
-  private mostrarErro(mensagem: string): void {
+  private openMessageError(mensagem: string): void {
     this.messageService.add({
       severity: 'error',
       summary: 'Erro',

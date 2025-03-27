@@ -6,8 +6,8 @@
         <ng-template pTemplate="center">
             <div class="flex align-items-center gap-2" style="flex-wrap: nowrap;">
                 <!-- Grupo de pesquisa -->
-                <input pInputText placeholder="Pesquisar..." [(ngModel)]="term" (keyup.enter)="pesquisar()">
-                <button pButton icon="pi pi-search" class="p-button-primary" (click)="pesquisar()"
+                <input pInputText placeholder="Pesquisar..." [(ngModel)]="term" (keyup.enter)="search()">
+                <button pButton icon="pi pi-search" class="p-button-primary" (click)="search()"
                     style="margin-left: 0.5rem;">
                 </button>
                 <button pButton icon="pi pi-plus" label="Novo" routerLink="/fornecedores/novo"
@@ -17,7 +17,7 @@
         </ng-template>
     </p-toolbar>
 
-    <p-table [value]="fornecedores" [loading]="loading" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5,10,20]"
+    <p-table [value]="suppliers" [loading]="loading" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5,10,20]"
         [globalFilterFields]="['codigo','razao','cnpj','status']">
         <ng-template pTemplate="header">
             <tr>
@@ -51,7 +51,7 @@
                             [routerLink]="['/fornecedores/editar', fornecedor.id]"></button>
                         <button pButton icon="pi pi-trash" pTooltip="Excluir" tooltipPosition="top"
                             class="p-button-rounded p-button-text p-button-danger"
-                            (click)="confirmarExclusao(fornecedor)"></button>
+                            (click)="confirmDelete(fornecedor)"></button>
                     </div>
                 </td>
             </tr>

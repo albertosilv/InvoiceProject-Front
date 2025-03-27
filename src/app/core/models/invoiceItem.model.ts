@@ -3,7 +3,7 @@ import { Product } from './product.model';
 
 export interface InvoiceItem {
   id: number;
-  notaFiscal: Invoice;
+  invoice: Invoice;
   produto: Product;
   quantidade: number;
   valorUnitario: number;

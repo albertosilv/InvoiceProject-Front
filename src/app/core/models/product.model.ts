@@ -9,7 +9,7 @@ export const SituacaoProductBackendMap: Record<string, string> = {
   [SituacaoProduct.INATIVO]: 'INACTIVE',
 };
 
-export const situacoes = [
+export const status = [
   { label: SituacaoProduct.ATIVO, value: SituacaoProduct.ATIVO },
   { label: SituacaoProduct.INATIVO, value: SituacaoProduct.INATIVO },
 ];

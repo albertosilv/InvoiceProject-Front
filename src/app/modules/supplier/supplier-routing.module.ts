@@ -5,15 +5,15 @@ import { RouterModule } from '@angular/router';
 
 const supplierRoutes = [
   {
-    path: '', // Rota base: /produtos
+    path: '',
     component: SupplierListComponent,
   },
   {
-    path: 'novo', // Rota completa: /produtos/novo
+    path: 'novo',
     component: SupplierFormComponent,
   },
   {
-    path: 'editar/:id', // Rota completa: /produtos/editar/1
+    path: 'editar/:id',
     component: SupplierFormComponent,
   },
 ];

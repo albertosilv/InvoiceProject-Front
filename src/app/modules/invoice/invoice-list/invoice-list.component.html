@@ -7,8 +7,8 @@
         <ng-template pTemplate="center">
             <div class="flex align-items-center gap-2" style="flex-wrap: nowrap;">
                 <!-- Grupo de pesquisa -->
-                <input pInputText placeholder="Pesquisar..." [(ngModel)]="term" (keyup.enter)="pesquisar()">
-                <button pButton icon="pi pi-search" class="p-button-primary" (click)="pesquisar()"
+                <input pInputText placeholder="Pesquisar..." [(ngModel)]="term" (keyup.enter)="search()">
+                <button pButton icon="pi pi-search" class="p-button-primary" (click)="search()"
                     style="margin-left: 0.5rem;">
                 </button>
                 <button pButton icon="pi pi-plus" label="Nova" routerLink="/notas/novo" style="margin-left: 0.5rem;">
@@ -44,7 +44,7 @@
                             class="p-button-rounded p-button-text" [routerLink]="['/notas/editar', nota.id]"></button>
                         <button pButton icon="pi pi-trash" pTooltip="Excluir" tooltipPosition="top"
                             class="p-button-rounded p-button-text p-button-danger"
-                            (click)="confirmarExclusao(nota)"></button>
+                            (click)="confirmDelete(nota)"></button>
                     </div>
                 </td>
             </tr>

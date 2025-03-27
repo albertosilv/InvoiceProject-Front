@@ -37,8 +37,8 @@ import { CommonModule } from '@angular/common';
 export class ProductFormComponent implements OnInit {
   form: FormGroup;
   isEdit = false;
-  produtoId?: number;
-  situacoes = Object.values(SituacaoProduct);
+  productId?: number;
+  status = Object.values(SituacaoProduct);
   loading = false;
 
   constructor(
@@ -56,22 +56,22 @@ export class ProductFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.produtoId = this.route.snapshot.params['id'];
-    if (this.produtoId) {
+    this.productId = this.route.snapshot.params['id'];
+    if (this.productId) {
       this.isEdit = true;
-      this.carregarProduct(this.produtoId);
+      this.getProduct(this.productId);
     }
   }
 
-  carregarProduct(id: number): void {
+  getProduct(id: number): void {
     this.loading = true;
-    this.productService.obterPorId(id).subscribe({
-      next: (produto) => {
-        this.form.patchValue(produto);
+    this.productService.getById(id).subscribe({
+      next: (product) => {
+        this.form.patchValue(product);
         this.loading = false;
       },
       error: () => {
-        this.mostrarErro('Erro ao carregar produto');
+        this.openMessageError('Erro ao carregar produto');
         this.router.navigate(['/produtos']);
       },
     });
@@ -86,45 +86,47 @@ export class ProductFormComponent implements OnInit {
     this.loading = true;
     const formValue = this.form.value;
 
-    const produto = {
+    const product = {
       ...formValue,
       situacao: SituacaoProductBackendMap[formValue.situacao],
     };
 
-    if (this.isEdit && this.produtoId) {
-      this.atualizarProduct(this.produtoId, produto);
+    if (this.isEdit && this.productId) {
+      this.updateProduct(this.productId, product);
     } else {
-      this.criarProduct(produto);
+      this.createProduct(product);
     }
   }
 
-  private criarProduct(produto: Omit<Product, 'id'>): void {
-    this.productService.criar(produto).subscribe({
+  private createProduct(product: Omit<Product, 'id'>): void {
+    this.productService.create(product).subscribe({
       next: () => {
-        this.mostrarSucesso('Product criado com sucesso');
+        this.openMessageSucess('Produto criado com sucesso');
         this.router.navigate(['/produtos']);
       },
       error: (erro) => {
-        this.mostrarErro(erro.error?.message || 'Erro ao criar produto');
+        this.openMessageError(erro.error?.message || 'Erro ao criar produto');
         this.loading = false;
       },
     });
   }
 
-  private atualizarProduct(id: number, produto: Product): void {
-    this.productService.atualizar(id, produto).subscribe({
+  private updateProduct(id: number, product: Product): void {
+    this.productService.update(id, product).subscribe({
       next: () => {
-        this.mostrarSucesso('Product atualizado com sucesso');
+        this.openMessageSucess('Produto atualizado com sucesso');
         this.router.navigate(['/produtos']);
       },
       error: (erro) => {
-        this.mostrarErro(erro.error?.message || 'Erro ao atualizar produto');
+        this.openMessageError(
+          erro.error?.message || 'Erro ao atualizar produto'
+        );
         this.loading = false;
       },
     });
   }
 
-  private mostrarSucesso(mensagem: string): void {
+  private openMessageSucess(mensagem: string): void {
     this.messageService.add({
       severity: 'success',
       summary: 'Sucesso',
@@ -132,7 +134,7 @@ export class ProductFormComponent implements OnInit {
     });
   }
 
-  private mostrarErro(mensagem: string): void {
+  private openMessageError(mensagem: string): void {
     this.messageService.add({
       severity: 'error',
       summary: 'Erro',

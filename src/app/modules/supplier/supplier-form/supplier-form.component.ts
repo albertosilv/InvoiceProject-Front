@@ -44,7 +44,7 @@ export class SupplierFormComponent implements OnInit {
   form: FormGroup;
   isEdit = false;
   supplierId?: number;
-  situacoes = Object.values(SupplierStatus);
+  status = Object.values(SupplierStatus);
   loading = false;
 
   constructor(
@@ -80,22 +80,22 @@ export class SupplierFormComponent implements OnInit {
     this.supplierId = this.route.snapshot.params['id'];
     if (this.supplierId) {
       this.isEdit = true;
-      this.carregarFornecedor(this.supplierId);
+      this.getSupplier(this.supplierId);
     }
   }
 
-  carregarFornecedor(id: number): void {
+  getSupplier(id: number): void {
     this.loading = true;
-    this.supplierService.buscarPorId(id).subscribe({
-      next: (fornecedor) => {
+    this.supplierService.getById(id).subscribe({
+      next: (supplier) => {
         this.form.patchValue({
-          ...fornecedor,
-          cnpj: this.formatarCNPJ(fornecedor.cnpj),
+          ...supplier,
+          cnpj: this.formatedCNPJ(supplier.cnpj),
         });
         this.loading = false;
       },
       error: () => {
-        this.mostrarErro('Erro ao carregar fornecedor');
+        this.openMessageError('Erro ao carregar supplier');
         this.router.navigate(['/fornecedores']);
       },
     });
@@ -110,46 +110,48 @@ export class SupplierFormComponent implements OnInit {
     this.loading = true;
     const formValue = this.form.value;
 
-    const fornecedor = {
+    const supplier = {
       ...formValue,
       cnpj: formValue.cnpj.replace(/\D/g, ''), // Remove formatação do CNPJ
       status: SituacaoSupplierBackendMap[formValue.status] || formValue.status,
     };
 
     if (this.isEdit && this.supplierId) {
-      this.atualizarFornecedor(this.supplierId, fornecedor);
+      this.updateSupplier(this.supplierId, supplier);
     } else {
-      this.criarFornecedor(fornecedor);
+      this.criarFornecedor(supplier);
     }
   }
 
-  private criarFornecedor(fornecedor: Omit<Supplier, 'id'>): void {
-    this.supplierService.criar(fornecedor).subscribe({
+  private criarFornecedor(supplier: Omit<Supplier, 'id'>): void {
+    this.supplierService.create(supplier).subscribe({
       next: () => {
-        this.mostrarSucesso('Fornecedor criado com sucesso');
-        this.router.navigate(['/fornecedores']);
+        this.openMessageSucess('Fornecedor criado com sucesso');
+        this.router.navigate(['/supplieres']);
       },
       error: (erro) => {
-        this.mostrarErro(erro.error?.message || 'Erro ao criar fornecedor');
+        this.openMessageError(erro.error?.message || 'Erro ao criar supplier');
         this.loading = false;
       },
     });
   }
 
-  private atualizarFornecedor(id: number, fornecedor: Supplier): void {
-    this.supplierService.atualizar(id, fornecedor).subscribe({
+  private updateSupplier(id: number, supplier: Supplier): void {
+    this.supplierService.update(id, supplier).subscribe({
       next: () => {
-        this.mostrarSucesso('Fornecedor atualizado com sucesso');
+        this.openMessageSucess('Fornecedor atualizado com sucesso');
         this.router.navigate(['/fornecedores']);
       },
       error: (erro) => {
-        this.mostrarErro(erro.error?.message || 'Erro ao atualizar fornecedor');
+        this.openMessageError(
+          erro.error?.message || 'Erro ao atualizar supplier'
+        );
         this.loading = false;
       },
     });
   }
 
-  private formatarCNPJ(cnpj: string): string {
+  private formatedCNPJ(cnpj: string): string {
     if (!cnpj) return '';
     return cnpj.replace(
       /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,
@@ -157,7 +159,7 @@ export class SupplierFormComponent implements OnInit {
     );
   }
 
-  confirmarCancelamento(): void {
+  confirmCanceled(): void {
     if (this.form.pristine) {
       this.router.navigate(['/fornecedores']);
       return;
@@ -176,21 +178,19 @@ export class SupplierFormComponent implements OnInit {
     });
   }
 
-  private mostrarSucesso(mensagem: string): void {
+  private openMessageSucess(mensagem: string): void {
     this.messageService.add({
       severity: 'success',
       summary: 'Sucesso',
       detail: mensagem,
-      life: 3000,
     });
   }
 
-  private mostrarErro(mensagem: string): void {
+  private openMessageError(mensagem: string): void {
     this.messageService.add({
       severity: 'error',
       summary: 'Erro',
       detail: mensagem,
-      life: 5000,
     });
   }
 }

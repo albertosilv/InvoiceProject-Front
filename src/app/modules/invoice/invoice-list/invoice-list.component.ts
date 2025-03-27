@@ -44,14 +44,14 @@ export class InvoiceListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.carregarNotasFiscais();
+    this.getInvoices();
   }
 
-  carregarNotasFiscais(): void {
+  getInvoices(): void {
     this.loading = true;
-    this.invoiceService.pesquisar(this.term).subscribe({
-      next: (notas) => {
-        this.invoices = notas;
+    this.invoiceService.search(this.term).subscribe({
+      next: (invoices) => {
+        this.invoices = invoices;
         this.loading = false;
       },
       error: (err) => {
@@ -65,32 +65,32 @@ export class InvoiceListComponent implements OnInit {
     });
   }
 
-  pesquisar(): void {
-    this.carregarNotasFiscais();
+  search(): void {
+    this.getInvoices();
   }
 
-  confirmarExclusao(nota: Invoice): void {
+  confirmDelete(invoice: Invoice): void {
     this.confirmationService.confirm({
-      message: `Deseja realmente excluir a nota fiscal ${nota.numeroNota}?`,
+      message: `Deseja realmente remover a nota fiscal ${invoice.numeroNota}?`,
       header: 'Confirmar Exclusão',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sim',
       rejectLabel: 'Não',
       accept: () => {
-        this.excluirInvoice(nota.id);
+        this.excluirInvoice(invoice.id);
       },
     });
   }
 
   excluirInvoice(id: number): void {
-    this.invoiceService.excluir(id).subscribe({
+    this.invoiceService.delete(id).subscribe({
       next: () => {
         this.messageService.add({
           severity: 'success',
           summary: 'Sucesso',
           detail: 'Nota fiscal excluída com sucesso',
         });
-        this.carregarNotasFiscais();
+        this.getInvoices();
       },
       error: (err) => {
         this.messageService.add({

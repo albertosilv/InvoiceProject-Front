@@ -1,7 +1,7 @@
 # 📄 InvoiceProject - Sistema de Gerenciamento de Notas Fiscais
 
-![GitHub repo size](https://img.shields.io/github/repo-size/albertosilv/InvoiceProject-Front)
-![GitHub](https://img.shields.io/github/license/albertosilv/InvoiceProject-Front)
+![GitHub repo size](https://img.shields.io/github/repo-size/albertosilv/InvoiceProject-front)
+![GitHub](https://img.shields.io/github/license/albertosilv/InvoiceProject-front)
 
 O InvoiceProject é uma aplicação web moderna para gerenciamento de notas fiscais, desenvolvida com Angular e PrimeNG no frontend, integrando-se com um backend Java Spring Boot.
 
@@ -31,7 +31,7 @@ O InvoiceProject é uma aplicação web moderna para gerenciamento de notas fisc
 - Node.js 23
 - npm 10.9.0
 - Angular CLI 19
-- Backend InvoiceProject em execução (disponível em [repositório do backend](https://github.com/albertosilv/InvoiceProject))
+- Backend InvoiceProject em execução (disponível em [repositório do backend](https://github.com/albertosilv/InvoiceProject-back))
 
 ### Passo a Passo
 
